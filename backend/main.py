@@ -42,10 +42,12 @@ async def main():
         
         from app.database.connection import Database
         
-        # URL FIXA DO SEU BANCO NO RENDER
-        DATABASE_URL = "postgresql://xixa00marketingoff_user:dVejVbGNqXI2EyafJXlYv4eMovSiWsuT@dpg-d98ovvreo5us73fgjuig-a.oregon-postgres.render.com/xixa00marketingoff"
+        DATABASE_URL = os.getenv(
+            "DATABASE_URL",
+            "postgresql://xixa00marketingoff_user:dVejVbGNqXI2EyafJXlYv4eMovSiWsuT@dpg-d98ovvreo5us73fgjuig-a.oregon-postgres.render.com/xixa00marketingoff"
+        )
         
-        logger.info("📊 Conectando ao PostgreSQL no Render...")
+        logger.info("📊 Conectando ao PostgreSQL...")
         
         db = Database(DATABASE_URL)
         db.create_tables()
@@ -56,15 +58,26 @@ async def main():
         bot.db = db
         await bot.setup()
         
-        logger.info("🚀 Bot iniciado!")
+        logger.info("🚀 Bot iniciado! Pressione CTRL+C para parar.")
         
-        await bot.application.run_polling(
+        # CORRIGIDO: usa run_polling de forma compatível
+        await bot.application.initialize()
+        await bot.application.start()
+        await bot.application.updater.start_polling(
             allowed_updates=['message', 'callback_query'],
             drop_pending_updates=True
         )
         
+        # Mantém rodando
+        while True:
+            await asyncio.sleep(3600)
+        
     except KeyboardInterrupt:
         logger.info("👋 Bot finalizado")
+        if 'bot' in locals():
+            await bot.application.updater.stop()
+            await bot.application.stop()
+            await bot.application.shutdown()
     except Exception as e:
         logger.error(f"❌ Erro fatal: {e}")
         import traceback
