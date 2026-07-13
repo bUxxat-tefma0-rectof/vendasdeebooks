@@ -4,14 +4,14 @@ python-telegram-bot==20.7
 # Environment Variables
 python-dotenv==1.0.0
 
-# Database
-SQLAlchemy==2.0.23
+# Database - versões compatíveis com Python 3.11
+SQLAlchemy==2.0.35
 psycopg2-binary==2.9.9
 
 # Mercado Pago API
 mercadopago==2.2.0
 
-# QR Code Generation (qrcode sozinho gera PNG sem Pillow)
+# QR Code Generation
 qrcode==7.4.2
 
 # Excel/PDF Generation
