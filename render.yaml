@@ -1,14 +1,11 @@
 services:
   - type: web
     name: bot-vendas
-    env: python
+    env: docker
     region: oregon
-    runtime: python311
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && python main.py
+    plan: free
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.11.11"
       - key: BOT_TOKEN
         sync: false
       - key: DATABASE_URL
@@ -31,7 +28,5 @@ services:
         value: "10.0"
       - key: GRUPO_SUPORTE_LINK
         value: "https://t.me/seu_grupo"
-      - key: TERMOS_USO_LINK
-        value: "https://telegra.ph/Termos"
       - key: LOG_LEVEL
         value: "INFO"
