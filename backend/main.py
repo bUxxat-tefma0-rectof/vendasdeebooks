@@ -7,6 +7,8 @@ import logging
 import sys
 import os
 from datetime import datetime
+from threading import Thread
+from flask import Flask
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,6 +17,22 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+# Servidor HTTP falso para o Render detectar porta aberta
+web_app = Flask(__name__)
+
+@web_app.route('/')
+def home():
+    return "Bot is running!"
+
+@web_app.route('/health')
+def health():
+    return "OK", 200
+
+def run_web_server():
+    """Roda servidor HTTP em thread separada"""
+    port = int(os.getenv('PORT', 8080))
+    web_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
 
 def check_env():
@@ -40,6 +58,11 @@ async def main():
         
         check_env()
         
+        # Inicia servidor HTTP em thread separada
+        web_thread = Thread(target=run_web_server, daemon=True)
+        web_thread.start()
+        logger.info("🌐 Servidor HTTP iniciado na porta " + os.getenv('PORT', '8080'))
+        
         from app.database.connection import Database
         
         DATABASE_URL = os.getenv(
@@ -58,9 +81,8 @@ async def main():
         bot.db = db
         await bot.setup()
         
-        logger.info("🚀 Bot iniciado! Pressione CTRL+C para parar.")
+        logger.info("🚀 Bot iniciado!")
         
-        # CORRIGIDO: usa run_polling de forma compatível
         await bot.application.initialize()
         await bot.application.start()
         await bot.application.updater.start_polling(
@@ -68,16 +90,11 @@ async def main():
             drop_pending_updates=True
         )
         
-        # Mantém rodando
         while True:
             await asyncio.sleep(3600)
         
     except KeyboardInterrupt:
         logger.info("👋 Bot finalizado")
-        if 'bot' in locals():
-            await bot.application.updater.stop()
-            await bot.application.stop()
-            await bot.application.shutdown()
     except Exception as e:
         logger.error(f"❌ Erro fatal: {e}")
         import traceback
