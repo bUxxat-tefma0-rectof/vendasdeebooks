@@ -6,8 +6,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime, timedelta
 import enum
-import secrets
-import string
 
 Base = declarative_base()
 
@@ -57,8 +55,8 @@ class Usuario(Base):
     notificacoes_ativas = Column(Boolean, default=True)
     alertas_produtos = Column(Text, default="")
     
-    compras = relationship("Compra", back_populates="usuario", lazy="dynamic")
-    transacoes = relationship("Transacao", back_populates="usuario", lazy="dynamic")
+    compras = relationship("Compra", back_populates="usuario", lazy="dynamic", foreign_keys="Compra.usuario_id")
+    transacoes = relationship("Transacao", back_populates="usuario", lazy="dynamic", foreign_keys="Transacao.usuario_id")
     
     def __repr__(self):
         return f"<Usuario(id={self.id}, telegram_id={self.telegram_id})>"
@@ -142,6 +140,7 @@ class EstoqueLogin(Base):
     data_adicao = Column(DateTime, default=datetime.now)
     
     produto = relationship("Produto", back_populates="logins")
+    comprador = relationship("Usuario", foreign_keys=[comprador_id])
 
 
 class Compra(Base):
@@ -191,7 +190,7 @@ class Transacao(Base):
     data_aprovacao = Column(DateTime, nullable=True)
     data_cancelamento = Column(DateTime, nullable=True)
     
-    usuario = relationship("Usuario", back_populates="transacoes")
+    usuario = relationship("Usuario", back_populates="transacoes", foreign_keys=[usuario_id])
     
     @property
     def expirada(self):
