@@ -11,9 +11,8 @@ psycopg2-binary==2.9.9
 # Mercado Pago API
 mercadopago==2.2.0
 
-# QR Code Generation
+# QR Code Generation (qrcode sozinho gera PNG sem Pillow)
 qrcode==7.4.2
-Pillow==10.2.0
 
 # Excel/PDF Generation
 openpyxl==3.1.2
