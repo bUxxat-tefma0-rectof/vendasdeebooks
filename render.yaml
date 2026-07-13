@@ -3,7 +3,10 @@ services:
     name: bot-vendas
     env: python
     region: oregon
-    buildCommand: pip install -r backend/requirements.txt
+    buildCommand: |
+      apt-get update && apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev
+      pip install --upgrade pip
+      pip install -r backend/requirements.txt
     startCommand: cd backend && python main.py
     envVars:
       - key: RENDER
