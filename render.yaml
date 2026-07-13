@@ -4,19 +4,15 @@ services:
     env: python
     region: oregon
     runtime: python311
-    buildCommand: pip install --upgrade pip && pip install -r backend/requirements.txt
+    buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && python main.py
     envVars:
-      - key: RENDER
-        value: "true"
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.11"
       - key: BOT_TOKEN
         sync: false
       - key: DATABASE_URL
-        fromDatabase:
-          name: bot-vendas-db
-          property: connectionString
+        value: "postgresql://xixa00marketingoff_user:dVejVbGNqXI2EyafJXlYv4eMovSiWsuT@dpg-d98ovvreo5us73fgjuig-a.oregon-postgres.render.com/xixa00marketingoff"
       - key: MP_ACCESS_TOKEN
         sync: false
       - key: MP_PUBLIC_KEY
@@ -34,14 +30,8 @@ services:
       - key: COMISSAO_AFILIADO_PADRAO
         value: "10.0"
       - key: GRUPO_SUPORTE_LINK
-        sync: false
+        value: "https://t.me/seu_grupo"
       - key: TERMOS_USO_LINK
-        sync: false
+        value: "https://telegra.ph/Termos"
       - key: LOG_LEVEL
         value: "INFO"
-
-databases:
-  - name: bot-vendas-db
-    plan: free
-    databaseName: bot_vendas
-    user: bot_admin
