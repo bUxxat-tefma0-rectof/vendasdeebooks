@@ -1,0 +1,50 @@
+# Telegram Bot Framework
+python-telegram-bot==20.7
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Database
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
+
+# Mercado Pago API
+mercado-pago==2.2.0
+
+# QR Code Generation
+qrcode==7.4.2
+Pillow==10.1.0
+Pillow-PIL==0.1.0
+
+# Excel/PDF Generation
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+fpdf2==2.7.4
+
+# Scheduler
+APScheduler==3.10.4
+
+# Redis (for caching and job queue)
+redis==5.0.1
+hiredis==2.2.3
+
+# Async support
+aiohttp==3.9.1
+aiofiles==23.2.1
+
+# Date and Time
+pytz==2023.3
+python-dateutil==2.8.2
+
+# Logging
+loguru==0.7.2
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.23.2
+
+# Code Quality (optional, for development)
+black==23.11.0
+flake8==6.1.0
+isort==5.13.2
