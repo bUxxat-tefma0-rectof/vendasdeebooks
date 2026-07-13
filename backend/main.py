@@ -18,7 +18,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Servidor HTTP falso para o Render detectar porta aberta
 web_app = Flask(__name__)
 
 @web_app.route('/')
@@ -30,26 +29,24 @@ def health():
     return "OK", 200
 
 def run_web_server():
-    """Roda servidor HTTP em thread separada"""
     port = int(os.getenv('PORT', 8080))
     web_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
 
 def check_env():
-    """Verifica variáveis de ambiente"""
-    required_vars = ['BOT_TOKEN']
+    required_vars = ['BOT_TOKEN', 'DATABASE_URL']
     missing = []
     for var in required_vars:
         if not os.getenv(var):
             missing.append(var)
     if missing:
         logger.error(f"❌ Variáveis faltando: {', '.join(missing)}")
+        logger.error("Conecte o banco PostgreSQL no painel do Render!")
         sys.exit(1)
     logger.info("✅ Variáveis de ambiente verificadas!")
 
 
 async def main():
-    """Função principal"""
     try:
         logger.info("=" * 50)
         logger.info("🤖 INICIANDO BOT DE VENDAS")
@@ -58,19 +55,18 @@ async def main():
         
         check_env()
         
-        # Inicia servidor HTTP em thread separada
         web_thread = Thread(target=run_web_server, daemon=True)
         web_thread.start()
-        logger.info("🌐 Servidor HTTP iniciado na porta " + os.getenv('PORT', '8080'))
+        
+        port = os.getenv('PORT', '8080')
+        logger.info(f"🌐 Servidor HTTP na porta {port}")
         
         from app.database.connection import Database
         
-        DATABASE_URL = os.getenv(
-            "DATABASE_URL",
-            "postgresql://xixa00marketingoff_user:dVejVbGNqXI2EyafJXlYv4eMovSiWsuT@dpg-d98ovvreo5us73fgjuig-a.oregon-postgres.render.com/xixa00marketingoff"
-        )
+        # USA A URL DO AMBIENTE (Render injeta automaticamente)
+        DATABASE_URL = os.getenv('DATABASE_URL')
         
-        logger.info("📊 Conectando ao PostgreSQL...")
+        logger.info(f"📊 Conectando ao PostgreSQL...")
         
         db = Database(DATABASE_URL)
         db.create_tables()
