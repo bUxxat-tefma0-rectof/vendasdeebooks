@@ -3,16 +3,14 @@ services:
     name: bot-vendas
     env: python
     region: oregon
-    buildCommand: |
-      apt-get update && apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev
-      pip install --upgrade pip
-      pip install -r backend/requirements.txt
+    runtime: python311
+    buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && python main.py
     envVars:
       - key: RENDER
         value: "true"
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.11"
       - key: BOT_TOKEN
         sync: false
       - key: DATABASE_URL
