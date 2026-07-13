@@ -15,11 +15,12 @@ class Config:
     # Mercado Pago
     MP_ACCESS_TOKEN: str = os.getenv("MP_ACCESS_TOKEN", "")
     MP_PUBLIC_KEY: str = os.getenv("MP_PUBLIC_KEY", "")
-    MP_CLIENT_ID: str = os.getenv("MP_CLIENT_ID", "")
-    MP_CLIENT_SECRET: str = os.getenv("MP_CLIENT_SECRET", "")
     
-    # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///bot_vendas.db")
+    # Database - URL FIXA DO RENDER
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        "postgresql://xixa00marketingoff_user:dVejVbGNqXI2EyafJXlYv4eMovSiWsuT@dpg-d98ovvreo5us73fgjuig-a.oregon-postgres.render.com/xixa00marketingoff"
+    )
     
     # Admin IDs
     ADMIN_IDS: List[int] = [
@@ -28,7 +29,7 @@ class Config:
         if id.strip()
     ]
     
-    # Gateway
+    # Gateway PIX
     VALOR_MINIMO_PIX: float = float(os.getenv("VALOR_MINIMO_PIX", "10.00"))
     VALOR_MAXIMO_PIX: float = float(os.getenv("VALOR_MAXIMO_PIX", "500.00"))
     TEMPO_EXPIRACAO_PIX: int = int(os.getenv("TEMPO_EXPIRACAO_PIX", "300"))
@@ -42,22 +43,14 @@ class Config:
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     LOG_FILE: str = os.getenv("LOG_FILE", "bot_vendas.log")
     
-    # Redis
-    REDIS_HOST: str = os.getenv("REDIS_HOST", "localhost")
-    REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
-    REDIS_DB: int = int(os.getenv("REDIS_DB", "0"))
-    REDIS_PASSWORD: str = os.getenv("REDIS_PASSWORD", "")
-    
     # Geral
     TIMEZONE: str = os.getenv("TIMEZONE", "America/Sao_Paulo")
-    IDIOMA_PADRAO: str = os.getenv("IDIOMA_PADRAO", "pt-BR")
-    CANAL_LOG_ID: str = os.getenv("CANAL_LOG_ID", "")
-    GRUPO_SUPORTE_LINK: str = os.getenv("GRUPO_SUPORTE_LINK", "")
-    TERMOS_USO_LINK: str = os.getenv("TERMOS_USO_LINK", "")
+    GRUPO_SUPORTE_LINK: str = os.getenv("GRUPO_SUPORTE_LINK", "https://t.me/seu_grupo")
+    TERMOS_USO_LINK: str = os.getenv("TERMOS_USO_LINK", "https://telegra.ph/Termos")
     
     @classmethod
     def is_admin(cls, user_id: int) -> bool:
-        """Verifica se o usuário é administrador"""
         return user_id in cls.ADMIN_IDS
+
 
 config = Config()
