@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from sqlalchemy import select
-from app.database import AsyncSessionLocal, User
+from app.database import AsyncSessionLocal, User, BotSettings
 from app.config import Config
 import random, string
 
@@ -56,3 +56,19 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(text, reply_markup=reply_markup, parse_mode="Markdown")
+
+async def id_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(f"🆔 Seu ID: `{update.effective_user.id}`", parse_mode="Markdown")
+
+async def saldo_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(User).where(User.telegram_id == update.effective_user.id))
+        user = result.scalar_one_or_none()
+    await update.message.reply_text(f"💰 Seu saldo: R$ {user.balance:.2f}", parse_mode="Markdown")
+
+async def termos_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(BotSettings).where(BotSettings.key == "terms_link"))
+        s = result.scalar_one_or_none()
+    link = s.value if s else "https://telegra.ph/termos"
+    await update.message.reply_text(f"📋 *Termos de Uso:*\n{link}", parse_mode="Markdown")
