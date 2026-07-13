@@ -4,9 +4,9 @@ python-telegram-bot==20.7
 # Environment Variables
 python-dotenv==1.0.0
 
-# Database - versões compatíveis com Python 3.11
+# Database
 SQLAlchemy==2.0.35
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 
 # Mercado Pago API
 mercadopago==2.2.0
