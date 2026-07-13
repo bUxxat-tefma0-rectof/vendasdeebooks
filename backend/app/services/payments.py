@@ -1,11 +1,15 @@
 """
 Serviço de Pagamentos - Integração Mercado Pago e PIX Automático
+Versão sem Pillow - usa qrcode puro
 """
 import logging
 import json
 import asyncio
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Tuple
+from io import BytesIO
+import base64
+import qrcode
 import mercadopago
 
 from ..config import config
@@ -14,15 +18,10 @@ from ..utils.utils import formatar_moeda, log_com_contexto
 logger = logging.getLogger(__name__)
 
 
-# ============================================
-# SERVIÇO MERCADO PAGO
-# ============================================
-
 class MercadoPagoService:
     """Serviço de integração com Mercado Pago"""
     
     def __init__(self):
-        """Inicializa o SDK do Mercado Pago"""
         self.sdk = None
         self.access_token = config.MP_ACCESS_TOKEN
         self.public_key = config.MP_PUBLIC_KEY
@@ -64,11 +63,15 @@ class MercadoPagoService:
                 poi = payment.get("point_of_interaction", {})
                 tx_data = poi.get("transaction_data", {})
                 
+                # Gera QR Code como bytes PNG
+                qr_code_text = tx_data.get("qr_code", "")
+                qr_image = self._generate_qr_image(qr_code_text)
+                
                 return {
                     'id': str(payment.get("id")),
-                    'qr_code': tx_data.get("qr_code", ""),
-                    'qr_code_base64': tx_data.get("qr_code_base64", ""),
-                    'copia_cola': tx_data.get("qr_code", ""),
+                    'qr_code': qr_code_text,
+                    'qr_code_base64': qr_image,
+                    'copia_cola': qr_code_text,
                     'status': payment.get("status", "pending"),
                     'valor': valor,
                     'data_expiracao': payment.get("date_of_expiration", "")
@@ -80,6 +83,32 @@ class MercadoPagoService:
         except Exception as e:
             logger.error(f"❌ Exceção ao criar PIX: {e}")
             return None
+    
+    def _generate_qr_image(self, data: str) -> str:
+        """Gera QR Code como base64 SEM usar Pillow"""
+        try:
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(data)
+            qr.make(fit=True)
+            
+            # Usa o método nativo do qrcode para gerar PNG
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            # Converte para bytes
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            buffer.seek(0)
+            
+            return base64.b64encode(buffer.read()).decode()
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao gerar QR Code: {e}")
+            return ""
     
     async def verificar_pagamento(self, payment_id: str) -> Optional[str]:
         """Verifica status de um pagamento"""
@@ -110,28 +139,7 @@ class MercadoPagoService:
         except Exception as e:
             logger.error(f"❌ Erro ao cancelar: {e}")
             return False
-    
-    async def reembolsar_pagamento(self, payment_id: str, valor: Optional[float] = None) -> bool:
-        """Reembolsa um pagamento aprovado"""
-        try:
-            if not self.sdk:
-                return False
-            
-            refund_data = {}
-            if valor:
-                refund_data["amount"] = float(valor)
-            
-            response = self.sdk.refund().create(payment_id, refund_data)
-            return response.get("status") in [200, 201]
-            
-        except Exception as e:
-            logger.error(f"❌ Erro ao reembolsar: {e}")
-            return False
 
-
-# ============================================
-# VERIFICADOR AUTOMÁTICO DE PAGAMENTOS
-# ============================================
 
 class VerificadorPagamentos:
     """Serviço que verifica pagamentos pendentes periodicamente"""
@@ -171,7 +179,7 @@ class VerificadorPagamentos:
             return
         
         self.verificacao_ativa = True
-        logger.info(f"🔄 Verificação automática iniciada")
+        logger.info("🔄 Verificação automática iniciada")
         
         while self.verificacao_ativa:
             try:
@@ -222,17 +230,9 @@ class VerificadorPagamentos:
         logger.info("⏹️ Verificação automática parada")
 
 
-# ============================================
-# INSTÂNCIAS GLOBAIS
-# ============================================
-
 mp_service = MercadoPagoService()
 verificador = VerificadorPagamentos()
 
-
-# ============================================
-# EXPORTAÇÕES
-# ============================================
 
 __all__ = [
     'MercadoPagoService',
