@@ -1,5 +1,95 @@
-.env
+# Python
 __pycache__/
-*.pyc
-*.db
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
+
+# Bot
+*.db
+*.sqlite3
+*.log
+logs/
+*.session
+*.session-journal
+
+# Environment variables
+.env.local
+.env.*.local
+
+# Database dumps
+*.dump
+*.sql.gz
+
+# Backup files
+*.bak
+*.backup
+
+# Token files
+*_token.txt
+*_secret.txt
+
+# Mercado Pago credentials
+mp_credentials.json
+
+# Uploaded files
+uploads/
+temp/
+*.tmp
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Docker
+docker-compose.override.yml
