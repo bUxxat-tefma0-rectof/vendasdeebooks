@@ -7,19 +7,18 @@ python-dotenv==1.0.0
 # Database
 SQLAlchemy==2.0.23
 psycopg2-binary==2.9.9
-alembic==1.12.1
 
 # Mercado Pago API
 mercadopago==2.2.0
 
 # QR Code Generation
 qrcode==7.4.2
-Pillow==10.1.0
+Pillow==10.2.0
 
 # Excel/PDF Generation
 openpyxl==3.1.2
 xlsxwriter==3.1.9
-fpdf2==2.7.4
+fpdf2==2.7.6
 
 # Scheduler
 APScheduler==3.10.4
@@ -32,7 +31,7 @@ aiofiles==23.2.1
 pytz==2023.3
 python-dateutil==2.8.2
 
-# Webhook server
+# Web
 Flask==3.0.0
 gunicorn==21.2.0
 
