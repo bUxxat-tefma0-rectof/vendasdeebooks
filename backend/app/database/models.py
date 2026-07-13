@@ -260,3 +260,15 @@ class LogAtividade(Base):
     descricao = Column(Text, default="")
     ip = Column(String(45), default="")
     data = Column(DateTime, default=datetime.now)
+
+
+class Avaliacao(Base):
+    __tablename__ = "avaliacoes"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    produto_id = Column(Integer, ForeignKey("produtos.id"), nullable=False)
+    compra_id = Column(Integer, ForeignKey("compras.id"), nullable=True)
+    nota = Column(Integer, default=5)
+    comentario = Column(Text, default="")
+    data = Column(DateTime, default=datetime.now)
