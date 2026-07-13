@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.pool import QueuePool, StaticPool
 from contextlib import contextmanager
 from typing import Generator, Optional
-import os
 
 logger = logging.getLogger(__name__)
 
